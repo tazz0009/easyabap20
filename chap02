@@ -110,3 +110,498 @@ WRITE:/ gv_f0,
 
 gv_len = STRLEN( gv_f5 ).
 WRITE:/ gv_len.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z02_06
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z02_06.
+
+DATA: gv_num1 TYPE i.
+DATA: gv_num2 TYPE n LENGTH 4.
+
+gv_num1 = 89.
+WRITE:/ gv_num1.
+
+gv_num2 = 89.
+WRITE:/ gv_num2.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z02_07
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z02_07.
+
+* 1. 날짜 계산
+DATA: gv_date TYPE d.
+
+gv_date = sy-datum.
+WRITE:/ gv_date.
+
+gv_date = gv_date + 3.
+WRITE:/ gv_date.
+
+* 2. 시간 계산
+DATA: gv_time TYPE t.
+
+gv_time = sy-uzeit.
+WRITE:/ gv_time.
+
+gv_time = gv_time - 60.
+WRITE:/ gv_time.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z02_08
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z02_08.
+
+DATA: gv_str TYPE string,
+      gv_chr(4) TYPE c.
+
+gv_str = 'ABAP'.
+gv_chr = 'B'.
+FIND gv_chr IN gv_str.
+IF sy-subrc EQ 0.
+  WRITE / 'B found'.
+ENDIF.
+
+gv_str = 'ABAP'.
+gv_chr = 'BBAP'.
+REPLACE 'ABAP' WITH gv_chr INTO gv_str.
+WRITE / gv_str.
+
+gv_str = 'ABAP'.
+TRANSLATE gv_str TO LOWER CASE.
+WRITE / gv_str.
+
+gv_str = 'ABAP'.
+SHIFT gv_str.
+WRITE / gv_str.
+
+gv_str = 'AB    AP'.
+CONDENSE gv_str NO-GAPS.
+WRITE / gv_str.
+
+gv_str = ' B P'.
+gv_chr = 'AAAA'.
+OVERLAY gv_str WITH gv_chr.
+WRITE / gv_str.
+
+gv_str = 'AB'.
+gv_chr = 'AP'.
+CONCATENATE gv_str gv_chr INTO gv_str.
+WRITE / gv_str.
+
+gv_str = 'AB,AP'.
+SPLIT gv_str AT ',' INTO gv_str gv_chr.
+WRITE: / gv_str,gv_chr.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z02_09
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z02_09.
+
+TYPES t_char10(10) TYPE c.
+DATA gv_val1 TYPE t_char10.
+DATA gv_val2 LIKE gv_val1.
+
+gv_val1 = '1234567890'.
+WRITE / gv_val1.
+
+gv_val2 = '1234567890'.
+WRITE / gv_val2.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z02_10
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z02_10.
+
+* 구조체 TYPE 선언
+TYPES: BEGIN OF t_ren,
+  name TYPE c LENGTH 20,
+  country TYPE c LENGTH 50,
+  city TYPE c LENGTH 10,
+END OF t_ren.
+
+* 구조체 변수 선언
+DATA gs_people TYPE t_ren.
+
+gs_people-name = 'KIM SUNGJOON'.
+gs_people-country = 'KOREA'.
+gs_people-city = 'SEOUL'.
+
+WRITE:/ gs_people-name, gs_people-country, gs_people-city.
+WRITE:/ gs_people.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z02_11
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z02_11.
+
+* 구조체 TYPE 선언
+TYPES: BEGIN OF t_ren,
+  name TYPE c LENGTH 20,
+  country TYPE c LENGTH 50,
+  city TYPE c LENGTH 10,
+END OF t_ren.
+
+* nested 구조체 TYPE 선언
+TYPES: BEGIN OF t_info.
+  INCLUDE TYPE t_ren as ren.
+  TYPES : phone TYPE c LENGTH 10,
+END OF t_info.
+
+* 구조체 Object 선언
+DATA gs_people TYPE t_info.
+
+gs_people-ren-name = 'CHOI SEUNGHWAN'.
+gs_people-ren-country = 'KOREA'.
+gs_people-ren-city = 'SEOUL'.
+gs_people-phone = '123456789'.
+
+WRITE:/ gs_people.
+WRITE :/ gs_people-ren-name, gs_people-ren-country,
+         gs_people-ren-city, gs_people-phone.
+		 
+		 
+*&---------------------------------------------------------------------*
+*& Report Z02_11
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z02_11.
+
+* 구조체 TYPE 선언
+TYPES: BEGIN OF t_ren,
+  name TYPE c LENGTH 20,
+  country TYPE c LENGTH 50,
+  city TYPE c LENGTH 10,
+END OF t_ren.
+
+* nested 구조체 TYPE 선언
+TYPES: BEGIN OF t_info.
+  INCLUDE TYPE t_ren as ren.
+  TYPES : phone TYPE c LENGTH 10,
+END OF t_info.
+
+* 구조체 Object 선언
+DATA gs_people TYPE t_info.
+
+gs_people-ren-name = 'CHOI SEUNGHWAN'.
+gs_people-ren-country = 'KOREA'.
+gs_people-ren-city = 'SEOUL'.
+gs_people-phone = '123456789'.
+
+WRITE:/ gs_people.
+WRITE :/ gs_people-ren-name, gs_people-ren-country,
+         gs_people-ren-city, gs_people-phone.
+		 
+		 
+*&---------------------------------------------------------------------*
+*& Report Z02_13
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z02_13.
+
+DATA: BEGIN OF gs_ren,
+  name TYPE c LENGTH 20,
+  country TYPE c LENGTH 15,
+  city TYPE c LENGTH 10,
+END OF gs_ren.
+
+DATA: BEGIN OF gs_people.
+  INCLUDE STRUCTURE gs_ren as ren.
+DATA: phone TYPE c LENGTH 10,
+END OF gs_people.
+
+gs_people-ren-name = 'CHOI SEUNGHWAN'.
+gs_people-ren-country = 'KOREA'.
+gs_people-ren-city = 'SEOUL'.
+gs_people-phone = '123456789'.
+
+WRITE:/ gs_people.
+WRITE :/ gs_people-ren-name, gs_people-ren-country,
+         gs_people-ren-city, gs_people-phone.
+		 
+		 
+*&---------------------------------------------------------------------*
+*& Report Z02_14
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z02_14.
+
+DATA: BEGIN OF gs_ren,
+  name TYPE c LENGTH 20,
+  country TYPE c LENGTH 15,
+  city TYPE c LENGTH 10,
+END OF gs_ren.
+
+DATA: BEGIN OF gs_people.
+  INCLUDE STRUCTURE gs_ren.
+DATA: phone TYPE c LENGTH 10,
+END OF gs_people.
+
+gs_people-name = 'CHOI SEUNGHWAN'.
+gs_people-country = 'KOREA'.
+gs_people-city = 'SEOUL'.
+gs_people-phone = '123456789'.
+
+WRITE:/ gs_people.
+WRITE :/ gs_people-name, gs_people-country,
+         gs_people-city, gs_people-phone.
+		 
+		 
+*&---------------------------------------------------------------------*
+*& Report Z02_15
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z02_15.
+
+DATA: gs_sflight TYPE sflight.
+
+SELECT SINGLE * FROM sflight INTO gs_sflight
+WHERE CARRID = 'AA'.
+
+WRITE:/ gs_sflight-CARRID, gs_sflight-CONNID, gs_sflight-FLDATE,
+        gs_sflight-PRICE, gs_sflight-CURRENCY, gs_sflight-PLANETYPE.
+		
+		
+*&---------------------------------------------------------------------*
+*& Report Z02_16
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z02_16.
+
+DATA: GV_CARRID TYPE SFLIGHT-CARRID,
+      GV_CONNID TYPE SFLIGHT-CONNID,
+      GV_FLDATE TYPE SFLIGHT-FLDATE.
+
+GV_CARRID = 'AA'.
+GV_CONNID = '0017'.
+GV_FLDATE = SY-DATUM.
+
+WRITE:/ GV_CARRID, GV_CONNID, GV_FLDATE.
+		 
+		 
+*&---------------------------------------------------------------------*
+*& Report Z02_17
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z02_17.
+
+* Data Element를 이용하여 변수 선언
+DATA gs_carrid TYPE s_carr_id.
+
+gs_carrid = 'AA'.
+
+WRITE:/ 'Carrid :', gs_carrid.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z02_18
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z02_18.
+
+DATA gs_str TYPE zstruct.
+
+gs_str-col1 = '1'.
+gs_str-col2 = 'Structure'.
+gs_str-col3 = 'ABAP Dictionary Test'.
+
+WRITE:/ gs_str.
+WRITE : gs_str-col1, gs_str-col2, gs_str-col3.
+
+
+
+REPORT  Z02_19.
+
+DATA : gv_tgrp1 TYPE ztgrp_typ1,
+        gv_tgrp2 TYPE ztgrp_typ2.
+
+gv_tgrp1 = 'Type Group'.
+gv_tgrp2-col1 = 'Test'.
+gv_tgrp2-col2 = 7.
+
+WRITE: gv_tgrp1, gv_tgrp2-col1, gv_tgrp2-col2, ztgrp_name.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z02_20
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z02_20.
+
+DATA: BEGIN OF gs_ren,
+  name(20) VALUE 'CHOI SEUNGHWAN',
+  country(10) VALUE 'KOREA',
+  city(20) VALUE 'SEOUL',
+END OF gs_ren.
+
+DATA: BEGIN OF gs_info,
+  name(20),
+  city(20),
+  phone(10) VALUE '1521001234',
+END OF gs_info.
+
+MOVE-CORRESPONDING gs_ren TO gs_info.
+
+WRITE:/ gs_info.
+WRITE:/ gs_info-name, gs_info-city, gs_info-phone.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z02_21
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z02_21.
+
+DATA: gv_f1(8) VALUE 'ABCDEFGH',
+      gv_f2(8).
+
+DATA: gv_start TYPE i VALUE 2,
+      gv_length TYPE i VALUE 4.
+
+MOVE gv_f1 TO gv_f2.
+WRITE:/ gv_f2.
+
+CLEAR: gv_f2.
+MOVE gv_f1+2(3) TO gv_f2.
+WRITE:/ gv_f2.
+
+CLEAR: gv_f2.
+MOVE gv_f1+gv_start(gv_length) TO gv_f2.
+WRITE:/ gv_f2.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z02_22
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z02_22.
+
+DATA: BEGIN OF gs_rate,
+  KIM TYPE f VALUE '0.8',
+  LEE TYPE f VALUE '1.0',
+END OF gs_rate.
+
+DATA: BEGIN OF gs_result,
+  KIM TYPE i VALUE 95,
+  LEE TYPE i VALUE 70,
+END OF gs_result.
+
+MULTIPLY-CORRESPONDING gs_result BY gs_rate.
+WRITE: 'Test Result', 'KIM:', gs_result-KIM, 'LEE:', gs_result-LEE.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z02_23
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z02_23.
+
+CONSTANTS c_company(10) VALUE 'EASY ABAP'.
+
+CONSTANTS: BEGIN OF c_people,
+  name(20) VALUE 'CHOI SEUNGHWAN',
+  country(10) VALUE 'KOREA',
+END OF c_people.
+
+WRITE: c_company, c_people-name, c_people-country.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z02_24
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z02_24.
+
+DO 5 TIMES.
+  PERFORM call_subr.
+ENDDO.
+
+FORM call_subr.
+  STATICS lv_val TYPE i.
+  lv_val = lv_val + 1.
+  WRITE:/ 'STATIC Variable :', lv_val.
+ENDFORM.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z02_25
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z02_25.
+
+DO 3 TIMES.
+  PERFORM call_subr.
+ENDDO.
+
+FORM call_subr.
+  DATA lv_val TYPE i.
+
+  lv_val = lv_val + 1.
+
+  WRITE:/ 'Local Variable :', lv_val.
+ENDFORM.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z02_26
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z02_26.
+
+TABLES: scarr.
+
+SELECT * FROM scarr.
+  WRITE:/ scarr-carrid, scarr-carrname.
+ENDSELECT.
+
+
+
+
+REPORT  Z03_01.
+
+DATA: gt_itab TYPE STANDARD 
+
+TABLE OF sflight,
+      gs_wa   TYPE sflight.
+
+SELECT * INTO gs_wa  
+
+FROM sflight
+WHERE  carrid EQ 'AA'.
+  WRITE : / gs_wa-carrid, 
+
+gs_wa-connid.
+ENDSELECT.
