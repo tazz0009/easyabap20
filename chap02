@@ -1,0 +1,112 @@
+*&---------------------------------------------------------------------*
+*& Report Z02_01
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z02_01.
+
+TYPES t_var TYPE c LENGTH 20.
+
+DATA gv_var TYPE t_var.
+
+gv_var = 'Hellow ABAP'.
+
+WRITE gv_var.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z02_03
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z02_03.
+
+DATA gv_1 TYPE p.
+DATA gv_2 TYPE p DECIMALS 14.
+DATA gv_3(16) TYPE p.
+
+gv_1 = '123456789012345'.
+gv_2 = '0.12345678901234'.
+gv_3 = '123456789012345678901'.
+
+WRITE:/ gv_1.
+WRITE:/ gv_2.
+WRITE:/ gv_3.
+
+*&---------------------------------------------------------------------*
+*& Report Z02_04
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z02_04.
+
+DATA: gv_int1 TYPE i VALUE 2.
+DATA: gv_int2 TYPE i VALUE 3.
+DATA: gv_iresult TYPE i.
+
+gv_iresult = gv_int1 + gv_int2.
+WRITE:/ '1 : ', gv_iresult.
+
+ADD 1 TO gv_iresult.
+WRITE:/ '2 : ', gv_iresult.
+
+
+DATA: gv_pack1 TYPE p DECIMALS 2 VALUE '2.17'.
+DATA: gv_pack2 TYPE p DECIMALS 2 VALUE '5.43'.
+DATA: gv_presult TYPE p DECIMALS 2.
+
+gv_presult = gv_pack1 + gv_pack2.
+WRITE:/ '3 : ', gv_presult.
+
+MULTIPLY gv_presult by gv_pack2.
+WRITE:/ '4 : ', gv_presult.
+
+
+DATA: gv_float1 TYPE f VALUE '1.337'.
+DATA: gv_float2 TYPE f VALUE '2.7'.
+DATA: gv_fresult TYPE f.
+DATA: gv_cresult TYPE c LENGTH 16.
+
+gv_fresult = gv_float2 * gv_float1.
+WRITE:/ '5 : ', gv_fresult.
+
+CALL FUNCTION 'FLTP_CHAR_CONVERSION'
+  EXPORTING
+    DECIM = 2
+    INPUT = gv_fresult
+  IMPORTING
+    FLSTR = gv_cresult.
+
+WRITE:/ '6 : ', gv_cresult.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z02_05
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z02_05.
+
+DATA gv_f0.
+DATA gv_f1 TYPE c.
+DATA gv_f2(1) TYPE c.
+DATA gv_f3(2) TYPE c.
+DATA gv_f4 TYPE c LENGTH 2.
+DATA gv_f5(5).
+DATA gv_len TYPE i.
+
+MOVE: 'KOREA' TO gv_f0,
+      'KOREA' TO gv_f1,
+      'KOREA' TO gv_f2,
+      'KOREA' TO gv_f3,
+      'KOREA' TO gv_f4,
+      'KOREA' TO gv_f5.
+
+WRITE:/ gv_f0,
+      / gv_f1,
+      / gv_f2,
+      / gv_f3,
+      / gv_f4.
+
+gv_len = STRLEN( gv_f5 ).
+WRITE:/ gv_len.
