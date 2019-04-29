@@ -1,0 +1,642 @@
+*&---------------------------------------------------------------------*
+*& Report Z03_01
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z03_01.
+
+DATA: gt_itab TYPE STANDARD TABLE OF sflight,
+      gs_wa TYPE sflight.
+
+SELECT * INTO TABLE gt_itab
+  FROM sflight
+ WHERE carrid EQ 'LH'.
+
+LOOP AT gt_itab INTO gs_wa.
+  WRITE:/ gs_wa-carrid, gs_wa-connid.
+ENDLOOP.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z03_02
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z03_02.
+
+DATA: gt_itab TYPE STANDARD TABLE OF sflight,
+      gs_wa LIKE LINE OF gt_itab.
+
+DATA: gs_line(72) TYPE c,
+      gt_list LIKE TABLE OF gs_line(72).
+
+gs_line = 'CARRID CONNID'.
+
+SELECT DISTINCT (gs_line) INTO CORRESPONDING FIELDS OF TABLE gt_itab
+  FROM sflight.
+
+IF sy-subrc EQ 0.
+  LOOP AT gt_itab INTO gs_wa.
+    WRITE:/ gs_wa-carrid, gs_wa-connid.
+  ENDLOOP.
+ENDIF.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z03_03
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z03_03.
+
+DATA: gt_itab TYPE STANDARD TABLE OF sflight,
+      gs_wa LIKE LINE OF gt_itab.
+
+DATA gs_line(72) TYPE c.
+DATA gt_list LIKE TABLE OF gs_line(72).
+
+gs_line = 'CARRID CONNID'.
+APPEND gs_line TO gt_list.
+
+SELECT DISTINCT (gt_list) INTO CORRESPONDING FIELDS OF TABLE gt_itab FROM sflight.
+IF sy-subrc EQ 0.
+  LOOP AT gt_itab INTO gs_wa.
+    WRITE:/ gs_wa-carrid, gs_wa-connid.
+  ENDLOOP.
+ENDIF.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z03_04
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z03_04.
+
+DATA: gs_wa TYPE sflight,
+      gt_itab TYPE TABLE OF sflight.
+
+SELECT carrid connid
+  FROM spfli
+  INTO CORRESPONDING FIELDS OF TABLE gt_itab
+  PACKAGE SIZE 5.
+    LOOP AT gt_itab INTO gs_wa.
+      WRITE:/ gs_wa-carrid, gs_wa-connid.
+    ENDLOOP.
+ENDSELECT.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z03_05
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z03_05.
+
+PARAMETERS p_tname TYPE char10.
+DATA gs_wa TYPE sflight.
+
+SELECT single * INTO gs_wa
+  FROM (p_tname)
+ WHERE carrid = 'LH'.
+
+
+WRITE:/ gs_wa-carrid.
+  
+  
+*&---------------------------------------------------------------------*
+*& Report Z03_06
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z03_06.
+
+TYPES: BEGIN OF t_str,
+  carrid TYPE sflight-carrid,
+  carrname TYPE scarr-carrname,
+END OF t_str.
+
+DATA: gs_str TYPE t_str.
+
+SELECT SINGLE a~carrid b~carrname
+  INTO CORRESPONDING FIELDS OF gs_str
+  FROM sflight AS a
+  INNER JOIN scarr AS b
+  ON a~carrid EQ b~carrid
+  WHERE a~carrid = 'LH'.
+
+WRITE:/ gs_str-carrid, gs_str-carrname.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z03_07
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z03_07.
+
+TYPES: BEGIN OF t_str,
+  carrid TYPE sflight-carrid,
+  carrname TYPE scarr-carrname,
+END OF t_str.
+
+DATA: gs_str TYPE t_str.
+
+SELECT SINGLE a~carrid b~carrname
+  INTO CORRESPONDING FIELDS OF gs_str
+  FROM sflight AS a
+  LEFT OUTER JOIN scarr AS b
+  ON a~carrid EQ b~carrid
+  WHERE a~carrid = 'LH'.
+
+WRITE:/ gs_str-carrid, gs_str-carrname.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z03_08
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z03_08.
+
+DATA gs_where TYPE c LENGTH 72.
+DATA gv_carrname TYPE scarr-carrname.
+DATA gv_carrid TYPE scarr-carrid VALUE 'AC'.
+
+CONCATENATE 'CARRID = ''' gv_carrid '''' INTO gs_where.
+
+SELECT SINGLE carrname
+  INTO gv_carrname
+  FROM scarr
+  WHERE (gs_where).
+
+WRITE:/ gv_carrname.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z03_09
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z03_09.
+
+DATA: gs_where TYPE c LENGTH 72.
+DATA: gt_where LIKE TABLE OF gs_where.
+DATA: gv_carrname TYPE scarr-carrname.
+DATA: gv_carrid1 TYPE scarr-carrid VALUE 'AC'.
+DATA: gv_carrid2 TYPE scarr-carrid VALUE 'AF'.
+
+CONCATENATE 'CARRID = ''' gv_carrid1 '''' INTO gs_where.
+APPEND gs_where TO gt_where.
+
+gs_where = 'OR'.
+APPEND gs_where TO gt_where.
+
+CONCATENATE 'CARRID = ''' gv_carrid2 '''' INTO gs_where.
+APPEND gs_where TO gt_where.
+
+SELECT carrname
+  INTO gv_carrname
+  FROM scarr
+  WHERE (gt_where).
+  WRITE:/ gv_carrname.
+ENDSELECT.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z03_10
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z03_10.
+
+DATA: gt_spfli TYPE TABLE OF spfli.
+DATA: gt_sflight TYPE TABLE OF sflight.
+DATA: gs_sflight TYPE sflight.
+
+SELECT * FROM spfli
+  INTO TABLE gt_spfli.
+
+SELECT * FROM sflight
+  INTO TABLE gt_sflight
+  FOR ALL ENTRIES IN gt_spfli
+  WHERE carrid = gt_spfli-carrid
+  AND connid = gt_spfli-connid.
+
+LOOP AT gt_sflight INTO gs_sflight.
+  WRITE:/ gs_sflight-carrid, gs_sflight-connid.
+ENDLOOP.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z03_10_01
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z03_10_01.
+
+DATA: gt_spfli TYPE TABLE OF spfli.
+DATA: gs_spfli TYPE spfli.
+
+SELECT *
+  FROM spfli
+  INTO TABLE gt_spfli.
+
+LOOP AT gt_spfli INTO gs_spfli.
+  WRITE:/ gs_spfli-carrid, gs_spfli-connid.
+ENDLOOP.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z03_11
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z03_11.
+
+DATA: gv_carrid TYPE sflight-carrid,
+      gv_connid TYPE sflight-connid,
+      gv_paymentsum TYPE i.
+
+SELECT carrid connid AVG( paymentsum )
+  INTO (gv_carrid, gv_connid, gv_paymentsum)
+  FROM sflight GROUP BY carrid connid.
+  WRITE:/ gv_carrid, gv_connid, gv_paymentsum.
+ENDSELECT.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z03_12
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z03_12.
+
+DATA: gv_carrid TYPE sflight-carrid,
+      gv_connid TYPE sflight-connid,
+      gv_paymentsum TYPE i.
+
+SELECT carrid connid AVG( paymentsum ) as paymentsum
+  INTO (gv_carrid, gv_connid, gv_paymentsum)
+  FROM sflight
+  GROUP BY carrid connid
+  ORDER BY paymentsum.
+  WRITE:/ gv_carrid, gv_connid, gv_paymentsum.
+ENDSELECT.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z03_13
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT  z03_13.
+
+DATA: gv_carrid        TYPE sflight-carrid,
+       gv_connid       TYPE sflight-connid,
+       gv_paymentsum TYPE sflight-paymentsum.
+
+SELECT SINGLE carrid connid paymentsum
+  INTO (gv_carrid , gv_connid, gv_paymentsum)
+  FROM  sflight AS a
+  WHERE carrid IN ( SELECT  carrid
+                     FROM  spfli
+                     WHERE carrid  = a~carrid
+                     AND    connid = a~connid  )
+  AND a~carrid = 'AC'.
+
+WRITE: gv_carrid, gv_connid, gv_paymentsum.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z03_14
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z03_14.
+
+DATA: gv_carrid TYPE sflight-carrid,
+      gv_connid TYPE sflight-connid,
+      gv_paymentsum TYPE sflight-paymentsum.
+
+SELECT SINGLE carrid connid paymentsum
+  INTO (gv_carrid, gv_connid, gv_paymentsum)
+  FROM sflight AS a
+  WHERE EXISTS ( SELECT *
+                 FROM spfli
+                 WHERE carrid = a~carrid
+                 AND connid = a~connid )
+  AND a~carrid = 'AC'.
+
+WRITE: gv_carrid, gv_connid, gv_paymentsum.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z03_15
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z03_15.
+
+DATA: gs_scarr TYPE scarr.
+
+gs_scarr-carrid = 'KO'.
+gs_scarr-carrname = 'Air Korea'.
+gs_scarr-url = 'http://www.airkorea.co.kr'.
+
+INSERT INTO SCARR VALUES gs_scarr.
+*INSERT SCARR FROM gs_scarr
+
+
+*&---------------------------------------------------------------------*
+*& Report Z03_16
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z03_16.
+
+DATA: gt_spfli TYPE TABLE OF spfli,
+      gs_spfli TYPE spfli.
+
+gs_spfli-carrid = 'KO'.
+gs_spfli-connid = '0001'.
+gs_spfli-cityfrom = 'Seoul'.
+gs_spfli-cityto = 'Beijing'.
+APPEND gs_spfli TO gt_spfli.
+
+gs_spfli-carrid = 'KO'.
+gs_spfli-connid = '0002'.
+gs_spfli-cityfrom = 'Seoul'.
+gs_spfli-cityto = 'Bangalore'.
+APPEND gs_spfli TO gt_spfli.
+
+INSERT spfli FROM TABLE gt_spfli ACCEPTING DUPLICATE KEYS.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z03_17
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z03_17.
+
+DATA gs_spfli TYPE spfli.
+
+MOVE 'KO' TO gs_spfli-carrid.
+MOVE '0001' TO gs_spfli-connid.
+MOVE 'Busan' TO gs_spfli-cityfrom.
+
+UPDATE spfli FROM gs_spfli.
+
+UPDATE spfli
+SET cityto = 'Shanghai'
+WHERE carrid = 'KO'
+AND connid = '0001'.
+
+IF sy-subrc eq 0.
+  WRITE 'Update is success!!!'.
+ENDIF.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z03_18
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z03_18.
+
+DATA gs_spfli TYPE spfli.
+
+MOVE 'KO' TO gs_spfli-carrid.
+MOVE '0001' TO gs_spfli-connid.
+
+DELETE spfli FROM gs_spfli.
+
+DELETE FROM spfli
+WHERE carrid = 'KO'.
+
+IF sy-subrc eq 0.
+  WRITE 'Delete Success!!!'.
+ENDIF.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z03_19
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z03_19.
+
+DATA: gt_spfli TYPE TABLE OF spfli,
+      gs_spfli TYPE spfli.
+
+gs_spfli-carrid = 'KO'.
+gs_spfli-connid = '0001'.
+gs_spfli-cityfrom = 'Korea'.
+MODIFY spfli FROM gs_spfli.
+
+gs_spfli-carrid = 'KO'.
+gs_spfli-connid = '0001'.
+gs_spfli-cityfrom = 'Busan'.
+APPEND gs_spfli TO gt_spfli.
+
+gs_spfli-carrid = 'KO'.
+gs_spfli-connid = '0003'.
+gs_spfli-cityfrom = 'Seoul'.
+APPEND gs_spfli TO gt_spfli.
+
+MODIFY spfli FROM TABLE gt_spfli.
+
+
+????????????????????????????
+REPORT  z03_20.
+
+PARAMETERS : p_sql(255) TYPE c.
+
+DATA: go_sql TYPE REF TO cl_sql_statement.
+DATA: gv_sql TYPE string.
+DATA: gd_ret TYPE i.
+
+CREATE OBJECT go_sql.
+gv_sql = p_sql.
+
+TRANSLATE gv_sql TO UPPER CASE.
+
+CALL METHOD go_sql->execute_update
+  EXPORTING
+    statement      = gv_sql
+  RECEIVING
+    rows_processed = gd_ret.
+
+	
+*&---------------------------------------------------------------------*
+*& Report Z03_21
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z03_21.
+
+DATA: gv_carrid TYPE sflight-carrid VALUE 'AC',
+      gv_connid TYPE sflight-connid.
+
+EXEC SQL.
+  SELECT A.CONNID
+    INTO :gv_connid
+    FROM sflight a
+   WHERE a.mandt = :sy-mandt
+     AND a.carrid = :gv_carrid
+ENDEXEC.
+
+WRITE gv_connid.
+
+
+
+*&---------------------------------------------------------------------*
+*& Report Z03_22
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z03_22.
+
+*INCLUDE z03_22_append_itabf01.
+
+TYPES: BEGIN OF t_str,
+  carrid LIKE sflight-carrid,
+  connid LIKE sflight-connid,
+END OF t_str.
+
+DATA gt_itab TYPE TABLE OF t_str.
+DATA gs_wa TYPE t_str.
+DATA gv_carrid LIKE sflight-carrid VALUE 'AF'.
+
+EXEC SQL PERFORMING APPEND_ITAB.
+  SELECT a.carrid, a.connid
+    INTO :gs_wa-carrid, :gs_wa-connid
+    FROM sflight a
+   WHERE a.mandt = :sy-mandt
+     AND a.carrid = :gv_carrid
+ENDEXEC.
+
+*&---------------------------------------------------------------------*
+*& Form APPEND_ITAB
+*&---------------------------------------------------------------------*
+*& text
+*&---------------------------------------------------------------------*
+*& -->  p1        text
+*& <--  p2        text
+*&---------------------------------------------------------------------*
+FORM APPEND_ITAB.
+  WRITE : / gs_wa-carrid, gs_wa-connid.
+  APPEND gs_wa TO gt_itab.
+  CLEAR  gt_itab.
+ENDFORM.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z03_23
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z03_23.
+
+TYPES: BEGIN OF t_str,
+  carrid LIKE sflight-carrid,
+  connid LIKE sflight-connid,
+  carrname LIKE scarr-carrname,
+END OF t_str.
+
+DATA gs_wa TYPE t_str.
+DATA: gv_carrid LIKE sflight-carrid VALUE 'LH'.
+
+EXEC SQL PERFORMING WRITE_DATA.
+  SELECT a.carrid, b.carrname
+    INTO :gs_wa-carrid, :gs_wa-carrname
+    FROM sflight a, scarr b
+   WHERE a.mandt = b.mandt
+     AND a.carrid = b.carrid
+     AND a.mandt = :sy-mandt
+     AND a.carrid = :gv_carrid
+ENDEXEC.
+
+*&---------------------------------------------------------------------*
+*& Form WRITE_DATA
+*&---------------------------------------------------------------------*
+*& text
+*&---------------------------------------------------------------------*
+*& -->  p1        text
+*& <--  p2        text
+*&---------------------------------------------------------------------*
+FORM WRITE_DATA .
+  WRITE:/ gs_wa-carrid, gs_wa-carrname.
+ENDFORM.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z03_24
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z03_24.
+
+TYPES: BEGIN OF t_str,
+  carrid LIKE sflight-carrid,
+  connid LIKE sflight-connid,
+  carrname LIKE scarr-carrname,
+END OF t_str.
+
+DATA gs_wa TYPE t_str.
+DATA: gv_carrid LIKE sflight-carrid VALUE 'LH'.
+
+EXEC SQL PERFORMING WRITE_DATA.
+  SELECT a.carrid, substr(b.carrname, 1, 8)
+    INTO :gs_wa-carrid, :gs_wa-carrname
+    FROM sflight a, scarr b
+   WHERE a.mandt = b.mandt
+     AND a.carrid = b.carrid
+     AND a.mandt = :sy-mandt
+     AND a.carrid = :gv_carrid
+ENDEXEC.
+*&---------------------------------------------------------------------*
+*& Form WRITE_DATA
+*&---------------------------------------------------------------------*
+*& text
+*&---------------------------------------------------------------------*
+*& -->  p1        text
+*& <--  p2        text
+*&---------------------------------------------------------------------*
+FORM WRITE_DATA .
+  WRITE:/ gs_wa-carrid, gs_wa-carrname.
+ENDFORM.
+
+
+*&---------------------------------------------------------------------*
+*& Report Z03_25
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z03_25.
+
+DATA gt_tab TYPE TABLE OF mara.
+
+SELECT * INTO TABLE gt_tab
+  FROM mara
+  UP TO 100 ROWS.
+  
+  
+*&---------------------------------------------------------------------*
+*& Report Z03_26
+*&---------------------------------------------------------------------*
+*&
+*&---------------------------------------------------------------------*
+REPORT Z03_26.
+
+DATA gt_tab TYPE TABLE OF mara.
+DATA gs_str TYPE mara.
+
+SELECT matnr INTO CORRESPONDING FIELDS OF TABLE gt_tab
+  FROM mara
+  UP TO 100 ROWS.
+
+LOOP AT gt_tab INTO gs_str.
+  WRITE:/ gs_str-matnr.
+ENDLOOP.
